@@ -2,7 +2,7 @@ import { putCustomer, createServiceOrder, findCustomer } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
 
 const handle = async (req, res) => {
-  const { name, doc, description } = req.body
+  const { name, doc, email, description } = req.body
 
   if (!name || !doc || !description) return res.end('Missing fields.')
 
