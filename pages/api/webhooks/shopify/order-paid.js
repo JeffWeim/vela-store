@@ -1,6 +1,5 @@
 import { putCustomer, createOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
-import orderExample from './ordermodel'
 
 const getOrderCustomer = ({ customer }) => {
   const addressArray = customer.default_address.address1.split(' ')
