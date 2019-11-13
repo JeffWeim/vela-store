@@ -37,6 +37,9 @@ const getOrderBikes = ({ line_items }) => {
 }
 
 const handle = async (req, res) => {
+  console.log('oi')
+  return res.end()
+
   const orderCustomer = getOrderCustomer(orderExample)
   const orderData = getOrderData(orderExample)
   const orderBikes = getOrderBikes(orderExample)
