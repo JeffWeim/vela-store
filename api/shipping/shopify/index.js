@@ -1,5 +1,5 @@
 const { json } = require('micro')
-const correios = require('node-correios')()
+const correios = require('node-correios')
 
 const normalizeText = text => {
   const specialChars = 'àáäâãèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ'
