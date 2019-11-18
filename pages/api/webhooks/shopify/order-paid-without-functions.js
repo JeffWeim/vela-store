@@ -3,24 +3,25 @@ import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const order = req.body
-  const cepLocation = await cep(order.customer.zip.length > 8 ? order.customer.zip : '09930270')
+  const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
+  const addressArray = order.customer.default_address.address1.split(' ')
 
   const omieCustomer = await putCustomer({
-    extId: order.customer.shopifyId.toString().substring(3, order.customer.shopifyId.length),
-    name: order.customer.name,
+    extId: order.customer.id.toString().substring(3, order.customer.id.length),
+    name: `${order.customer.first_name} ${order.customer.last_name}`,
     email: order.customer.email,
-    document: order.customer.document,
-    phone: order.customer.phone,
+    document: order.customer.default_address.company,
+    phone: order.customer.default_address.phone,
     zip: cepLocation.cep,
     state: cepLocation.state,
     city: cepLocation.city + ' (' + cepLocation.state + ')',
-    address: order.customer.address,
-    number: order.customer.number,
-    complement: order.customer.complement
+    address: addressArray.slice(0, -1).join(' '),
+    number: addressArray[addressArray.length - 1],
+    complement: order.customer.default_address.address2
   })
 
   const omieOrder = await createOrder({
-    customerId: omieCustomer.id,
+    customerId: omieCustomer.extId,
     orderId: order.id.toString().substring(3, order.id.length),
     forecast: '03/09/2019',
     information: {
