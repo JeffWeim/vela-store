@@ -33,7 +33,7 @@ const handle = async (req, res) => {
   const orderCustomer = getOrderCustomer(order)
   const orderData = getOrderData(order)
 
-  const cepLocadion = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
+  const cepLocation = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
 
   const omieCustomer = await putCustomer({
     extId: orderCustomer.shopifyId.toString().substring(3, orderCustomer.shopifyId.length),
@@ -41,9 +41,9 @@ const handle = async (req, res) => {
     email: order.customer.email,
     document: orderCustomer.document,
     phone: orderCustomer.phone,
-    zip: cepLocadion.cep,
+    zip: cepLocation.cep,
     state: cepLocation.state,
-    city: cepLocation.city + ' (' + ufcity.state + ')',
+    city: cepLocation.city + ' (' + cepLocation.state + ')',
     address: orderCustomer.address,
     number: orderCustomer.number,
     complement: orderCustomer.complement
