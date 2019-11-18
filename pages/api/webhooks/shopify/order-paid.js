@@ -33,11 +33,7 @@ const handle = async (req, res) => {
   const orderCustomer = getOrderCustomer(order)
   const orderData = getOrderData(order)
 
-<<<<<<< HEAD
-  const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
-=======
-  const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer : '09930270') //what if this fails?
->>>>>>> 4ebaa7ff71147671faf01f3a6f7f4b1f7fb2b7b4
+  const cepLocadion = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
 
   const omieCustomer = await putCustomer({
     extId: orderCustomer.shopifyId.toString().substring(3, orderCustomer.shopifyId.length),
@@ -45,9 +41,9 @@ const handle = async (req, res) => {
     email: order.customer.email,
     document: orderCustomer.document,
     phone: orderCustomer.phone,
-    zip: ufcity.cep,
-    state: ufcity.state,
-    city: ufcity.city + ' (' + ufcity.state + ')',
+    zip: cepLocadion.cep,
+    state: cepLocation.state,
+    city: cepLocation.city + ' (' + ufcity.state + ')',
     address: orderCustomer.address,
     number: orderCustomer.number,
     complement: orderCustomer.complement
@@ -56,7 +52,7 @@ const handle = async (req, res) => {
   const omieOrder = await createOrder({
     customerId: omieCustomer.id,
     orderId: orderData.shopifyId.toString().substring(3, orderData.shopifyId.length),
-    forecast: '03/09/2019',
+    forecast: '03/09/2019', // how should we hanle this?
     information: {
       codigo_categoria: '1.01.03',
       codigo_conta_corrente: 1359770974,
