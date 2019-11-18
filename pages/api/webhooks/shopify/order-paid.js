@@ -1,8 +1,6 @@
 import { putCustomer, createOrder } from 'lib/omie'
 import cep from 'cep-promise'
 
-//import { createCard } from 'lib/pipefy'
-
 const getOrderCustomer = ({ customer }) => {
   const addressArray = customer.default_address.address1.split(' ')
   return ({
@@ -30,24 +28,21 @@ const getOrderData = ({ id, order_status_url, total_discounts, total_line_items_
   })
 }
 
-// const getOrderBikes = ({ line_items }) => {
-//   const isBike = ({ sku }) => sku.startsWith('VEL-V1') || sku.startsWith('VEL-V2')
-
-//   return line_items.filter(isBike)
-// }
-
 const handle = async (req, res) => {
   const order = req.body
   const orderCustomer = getOrderCustomer(order)
   const orderData = getOrderData(order)
-  //const orderBikes = getOrderBikes(order)
 
+<<<<<<< HEAD
   const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
+=======
+  const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer : '09930270') //what if this fails?
+>>>>>>> 4ebaa7ff71147671faf01f3a6f7f4b1f7fb2b7b4
 
   const omieCustomer = await putCustomer({
     extId: orderCustomer.shopifyId.toString().substring(3, orderCustomer.shopifyId.length),
     name: orderCustomer.name,
-    email: orderCustomer.email,
+    email: order.customer.email,
     document: orderCustomer.document,
     phone: orderCustomer.phone,
     zip: ufcity.cep,
@@ -74,27 +69,13 @@ const handle = async (req, res) => {
       quantity: item.quantity,
       price: item.price * orderData.discountRatio
     })),
-    shippingValue: 30
+    shippingValue: 30 // this is not right
   })
 
   console.log(omieCustomer)
   console.log(omieOrder)
 
-  // const cardCreatePromises = orderBikes.map(async (orderBikes) => {
-  //   const card = await createCard({
-  //     pipe: '1078887',
-  //     fields: [
-  //       { field_id: 'bicicleta', field_value: `${orderBikes.sku}` },
-  //       { field_id: 'detalhes', field_value: `Bike: ${orderBikes.variant_title}` },
-  //       { field_id: 'contato', field_value: `Nome: ${orderCustomer.name}\nEmail: ${orderCustomer.email}\nTelefone: ${orderCustomer.phone}\nCPF: ${orderCustomer.document}` }
-  //     ]
-  //   })
-  //   console.log(card)
-  //   res.end('OK')
-  // })
-
-  // return Promise.all(cardCreatePromises)
-
+  // return 200 code so shopify knows webhook was correctly handled
   res.status(200).send('OK')
 }
 
