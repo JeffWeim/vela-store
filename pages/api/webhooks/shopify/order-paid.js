@@ -42,7 +42,7 @@ const handle = async (req, res) => {
   const orderData = getOrderData(order)
   //const orderBikes = getOrderBikes(order)
 
-  const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer : '09930270')
+  const ufcity = await cep(orderCustomer.zip.length > 8 ? orderCustomer.zip : '09930270')
 
   const omieCustomer = await putCustomer({
     extId: orderCustomer.shopifyId.toString().substring(3, orderCustomer.shopifyId.length),
