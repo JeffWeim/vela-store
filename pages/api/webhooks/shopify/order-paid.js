@@ -6,6 +6,17 @@ const handle = async (req, res) => {
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
 
+  console.log(`
+
+  Criando cliente omie:
+
+  Id Shopify: ${order.customer.id.toString().substring(3, order.customer.id.length)}
+  Nome: ${order.customer.first_name} ${order.customer.last_name}
+  Email: ${order.customer.email}
+  Telefone: ${order.customer.default_address.phone}
+
+  `)
+
   const omieCustomer = await putCustomer({
     extId: order.customer.id.toString().substring(3, order.customer.id.length),
     name: `${order.customer.first_name} ${order.customer.last_name}`,
@@ -19,6 +30,15 @@ const handle = async (req, res) => {
     number: addressArray[addressArray.length - 1],
     complement: order.customer.default_address.address2
   })
+
+  console.log(`
+
+  Criando ordem de pedido:
+
+  Id do cliente: ${omieCustomer.id}
+  Id do pedido: ${order.id.toString().substring(3, order.id.length)}
+
+  `)
 
   const omieOrder = await createOrder({
     customerId: omieCustomer.id,
@@ -39,8 +59,11 @@ const handle = async (req, res) => {
     shippingValue: 30
   })
 
-  console.log(omieCustomer)
-  console.log(omieOrder)
+  console.log(`
+  
+  Cliente e ordem de pedido cadastrados com sucesso. :)
+
+  `)
 
   res.status(200).send('OK')
 }
