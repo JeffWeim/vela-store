@@ -23,7 +23,7 @@ const handle = async (req, res) => {
   console.log('aaaaaaaaaa' + JSON.stringify(omieCustomer))
 
   const omieOrder = await createOrder({
-    customerId: omieCustomer.extId,
+    customerId: omieCustomer.codigo_cliente_integracao,
     orderId: order.id.toString().substring(3, order.id.length),
     forecast: '03/09/2019',
     information: {
