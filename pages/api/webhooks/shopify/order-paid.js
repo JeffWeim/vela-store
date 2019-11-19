@@ -71,10 +71,10 @@ const handle = async (req, res) => {
   order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
       const card = await createCard({
-        pipe: '1127491',
-        title: `${order.customer.first_name} ${order.customer.last_name}`,
-        fields: [
-          { field_id: 'nome', field_value: `${order.customer.first_name} ${order.customer.last_name}` }
+        pipe_id: '1127491',
+        fields_attributes: [
+          { field_id: 'nome', field_value: `${order.customer.first_name} ${order.customer.last_name}` },
+          { field_id: 'reserva', field_value: `${item.title}` }
         ]
       })
       console.log(card)
