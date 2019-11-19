@@ -5,7 +5,7 @@ const handle = async (req, res) => {
   const order = req.body
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
-
+  console.log("Start creating customer:" + order.customer.email)
   const omieCustomer = await putCustomer({
     extId: order.customer.id.toString().substring(3, order.customer.id.length),
     name: `${order.customer.first_name} ${order.customer.last_name}`,
