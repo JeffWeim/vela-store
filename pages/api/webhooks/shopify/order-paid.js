@@ -20,7 +20,7 @@ const handle = async (req, res) => {
     complement: order.customer.default_address.address2
   })
 
-  console.log('aaaaaaaaaa' + omieCustomer)
+  console.log('aaaaaaaaaa' + JSON.stringify(omieCustomer))
 
   const omieOrder = await createOrder({
     customerId: omieCustomer.extId,
