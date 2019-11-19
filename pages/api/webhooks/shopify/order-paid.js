@@ -20,10 +20,8 @@ const handle = async (req, res) => {
     complement: order.customer.default_address.address2
   })
 
-  console.log('aaaaaaaaaa' + JSON.stringify(omieCustomer))
-
   const omieOrder = await createOrder({
-    customerId: omieCustomer.codigo_cliente_integracao,
+    customerId: omieCustomer.id,
     orderId: order.id.toString().substring(3, order.id.length),
     forecast: '03/09/2019',
     information: {
