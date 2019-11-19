@@ -20,6 +20,8 @@ const handle = async (req, res) => {
     complement: order.customer.default_address.address2
   })
 
+  console.log('aaaaaaaaaa' + omieCustomer)
+
   const omieOrder = await createOrder({
     customerId: omieCustomer.extId,
     orderId: order.id.toString().substring(3, order.id.length),
