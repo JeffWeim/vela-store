@@ -1,4 +1,5 @@
 import { putCustomer, createOrder } from 'lib/omie'
+import { createCard } from 'lib/pipefy'
 import cep from 'cep-promise'
 
 const handle = async (req, res) => {
@@ -66,6 +67,20 @@ const handle = async (req, res) => {
   `)
 
   res.status(200).send('OK')
+
+  order.line_items.map(async item => {
+    if (item.title === 'Reserva Vela 2') {
+      const card = await createCard({
+        pipe: '1127491',
+        title: `${order.customer.first_name} ${order.customer.last_name}`,
+        fields: [
+          { field_id: 'nome', field_value: `${order.customer.first_name} ${order.customer.last_name}` }
+        ]
+      })
+      console.log(card)
+      res.end('OK')
+    }
+  })
 }
 
 export default handle
