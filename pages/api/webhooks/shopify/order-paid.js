@@ -21,7 +21,7 @@ const handle = async (req, res) => {
   })
 
   const omieOrder = await createOrder({
-    customerId: order.customer.id.toString().substring(3, order.customer.id.length),
+    customerId: omieCustomer.extId,
     orderId: order.id.toString().substring(3, order.id.length),
     forecast: '03/09/2019',
     information: {
