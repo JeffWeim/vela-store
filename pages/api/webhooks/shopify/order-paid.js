@@ -57,6 +57,11 @@ const handle = async (req, res) => {
     shippingValue: 30 // check it later
   })
 
+  console.log('aaaaaaaaaaaa' + order)
+  console.log('bbbbbbbbbbbb' + JSON.stringify(order))
+  console.log('cccccccccccc' + order.customer)
+  console.log('dddddddddddd' + JSON.stringify(order.customer))
+
   console.log(`-----
   Cliente e ordem de pedido cadastrados com sucesso. :)
   `)
