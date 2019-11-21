@@ -4,7 +4,6 @@ import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const order = req.body
-  console.log(JSON.stringify(order))
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
 
@@ -57,10 +56,6 @@ const handle = async (req, res) => {
     })),
     shippingValue: 30 // check it later
   })
-
-  console.log('bbbbbbbbbbbb' + JSON.stringify(order))
-  console.log('dddddddddddd' + JSON.stringify(order.customer))
-
   console.log(`-----
   Cliente e ordem de pedido cadastrados com sucesso. :)
   `)
