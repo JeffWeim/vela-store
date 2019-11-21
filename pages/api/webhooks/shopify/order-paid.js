@@ -7,8 +7,7 @@ const handle = async (req, res) => {
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
 
-  console.log(`
-
+  console.log(`-----
   Criando cliente omie:
 
   Id Shopify: ${order.customer.id.toString().substring(3, order.customer.id.length)}
@@ -16,7 +15,6 @@ const handle = async (req, res) => {
   Email: ${order.customer.email}
   Telefone: ${order.customer.default_address.phone}
   CEP: ${cepLocation.cep}
-
   `)
 
   const omieCustomer = await putCustomer({
@@ -33,13 +31,11 @@ const handle = async (req, res) => {
     complement: order.customer.default_address.address2
   })
 
-  console.log(`
-
+  console.log(`-----
   Criando ordem de pedido:
 
   Id do cliente: ${omieCustomer.id}
   Id do pedido: ${order.id.toString().substring(3, order.id.length)}
-
   `)
 
   const omieOrder = await createOrder({
@@ -66,21 +62,20 @@ const handle = async (req, res) => {
   Cliente e ordem de pedido cadastrados com sucesso. :)
 
   `)
-  order.line_items.map(async item => {
+  const cardListItem = await order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
       const card = await createCard({
         pipe_id: '1127491',
         fields_attributes: [
           { field_id: 'nome', field_value: `${order.customer.first_name} ${order.customer.last_name}` },
-          { field_id: 'reserva', field_value: `${item.title}` }
+          { field_id: 'reserva', field_value: `${item.title}` },
+          { field_id: 'telefone', field_value: `${order.customer.default_address.phone}` },
+          { field_id: 'email', field_value: `${order.customer.email}` }
         ]
       })
-      console.log(`
-
+      console.log(`-----
       Card criado com sucesso!
-
       `)
-      console.log(card)
     }
   })
   res.status(200).send('OK')
