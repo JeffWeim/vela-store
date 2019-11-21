@@ -21,7 +21,7 @@ const handle = async (req, res) => {
     extId: order.customer.id.toString().substring(3, order.customer.id.length),
     name: `${order.customer.first_name} ${order.customer.last_name}`,
     email: order.customer.email,
-    document: order.customer.default_address.company,
+    doc: order.customer.default_address.company,
     phone: order.customer.default_address.phone,
     zip: cepLocation.cep,
     state: cepLocation.state,
@@ -54,15 +54,13 @@ const handle = async (req, res) => {
       quantity: item.quantity,
       price: item.price * (order.total_line_items_price - order.total_discounts) / order.total_line_items_price
     })),
-    shippingValue: 30
+    shippingValue: 30 // check it later
   })
 
-  console.log(`
-  
+  console.log(`-----
   Cliente e ordem de pedido cadastrados com sucesso. :)
-
   `)
-  const cardListItem = await order.line_items.map(async item => {
+  order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
       const card = await createCard({
         pipe_id: '1127491',
