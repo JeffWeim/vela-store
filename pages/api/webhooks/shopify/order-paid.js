@@ -15,6 +15,7 @@ const handle = async (req, res) => {
   Nome: ${order.customer.first_name} ${order.customer.last_name}
   Email: ${order.customer.email}
   Telefone: ${order.customer.default_address.phone}
+  CEP: ${cepLocation.cep}
 
   `)
 
@@ -65,9 +66,6 @@ const handle = async (req, res) => {
   Cliente e ordem de pedido cadastrados com sucesso. :)
 
   `)
-
-  res.status(200).send('OK')
-
   order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
       const card = await createCard({
@@ -77,10 +75,15 @@ const handle = async (req, res) => {
           { field_id: 'reserva', field_value: `${item.title}` }
         ]
       })
+      console.log(`
+
+      Card criado com sucesso!
+
+      `)
       console.log(card)
-      res.end('OK')
     }
   })
+  res.status(200).send('OK')
 }
 
 export default handle
