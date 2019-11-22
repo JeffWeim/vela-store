@@ -52,13 +52,13 @@ const handle = async (req, res) => {
     if (item.title === 'Reserva Vela 2') {
       consoelog.log(`Creating Shopify card for Vela 2 reservation.`)
       const card = await createCard({
-        pipe_id: '1127491',
-        fields_attributes: [
-          { field_id: 'nome', field_value: `${order.customer.first_name} ${order.customer.last_name}` },
-          { field_id: 'reserva', field_value: `${item.title}` },
-          { field_id: 'telefone', field_value: `${order.customer.default_address.phone}` },
-          { field_id: 'email', field_value: `${order.customer.email}` }
-        ]
+        pipe: '1127491',
+        fields: {
+          nome: `${order.customer.first_name} ${order.customer.last_name}`,
+          reserva: item.title,
+          telefone: order.customer.default_address.phone,
+          email: order.customer.email
+        }
       })
       console.log(card)
     }
