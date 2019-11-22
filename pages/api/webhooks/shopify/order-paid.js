@@ -50,7 +50,7 @@ const handle = async (req, res) => {
 
   order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
-      consoelog.log(`Creating Shopify card for Vela 2 reservation.`)
+      console.log(`Creating Shopify card for Vela 2 reservation.`)
       const card = await createCard({
         pipe_id: '1127491',
         fields_attributes: [
