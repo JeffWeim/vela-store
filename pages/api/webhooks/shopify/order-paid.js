@@ -7,15 +7,7 @@ const handle = async (req, res) => {
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
 
-  console.log(`-----
-  Criando cliente omie:
-
-  Id Shopify: ${order.customer.id.toString().substring(3, order.customer.id.length)}
-  Nome: ${order.customer.first_name} ${order.customer.last_name}
-  Email: ${order.customer.email}
-  Telefone: ${order.customer.default_address.phone}
-  CEP: ${cepLocation.cep}
-  `)
+  console.log(`Creating customer ${order.customer.first_name} ${order.customer.last_name} on Omie`)
 
   const omieCustomer = await putCustomer({
     extId: order.customer.id.toString().substring(3, order.customer.id.length),
@@ -30,13 +22,9 @@ const handle = async (req, res) => {
     number: addressArray[addressArray.length - 1].substring(0, 10),
     complement: order.customer.default_address.address2
   })
+  console.log(omieCustomer)
 
-  console.log(`-----
-  Criando ordem de pedido:
-
-  Id do cliente: ${omieCustomer.id}
-  Id do pedido: ${order.id.toString().substring(3, order.id.length)}
-  `)
+  console.log(`Creating Order on Omie`)
 
   const omieOrder = await createOrder({
     customerId: omieCustomer.id,
@@ -56,11 +44,13 @@ const handle = async (req, res) => {
     })),
     shippingValue: 30 // check it later
   })
-  console.log(`-----
-  Cliente e ordem de pedido cadastrados com sucesso. :)
-  `)
+  console.log(omieOrder)
+
+  console.log(`Cliente e ordem de pedido cadastrados com sucesso. :)`)
+
   order.line_items.map(async item => {
     if (item.title === 'Reserva Vela 2') {
+      consoelog.log(`Creating Shopify card for Vela 2 reservation.`)
       const card = await createCard({
         pipe_id: '1127491',
         fields_attributes: [
@@ -70,9 +60,7 @@ const handle = async (req, res) => {
           { field_id: 'email', field_value: `${order.customer.email}` }
         ]
       })
-      console.log(`-----
-      Card criado com sucesso!
-      `)
+      console.log(card)
     }
   })
   res.status(200).send('OK')
