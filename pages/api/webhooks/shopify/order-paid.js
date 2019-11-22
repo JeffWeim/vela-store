@@ -27,7 +27,7 @@ const handle = async (req, res) => {
     state: cepLocation.state,
     city: cepLocation.city + ' (' + cepLocation.state + ')',
     address: addressArray.slice(0, -1).join(' '),
-    number: addressArray[addressArray.length - 1],
+    number: addressArray[addressArray.length - 1].substring(0, 10),
     complement: order.customer.default_address.address2
   })
 
