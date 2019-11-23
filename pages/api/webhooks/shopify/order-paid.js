@@ -1,11 +1,18 @@
 import { putCustomer, createOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
+import { firestore } from 'lib/firebase'
 import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const order = req.body
   const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   const addressArray = order.customer.default_address.address1.split(' ')
+
+  const ordersCollection = firestore.collection('orders')
+  const addDoc = await ordersCollection.add(order)
+  console.log(addDoc)
+  console.log('Returning 200 OK to Shopify')
+  res.send('OK')
 
   console.log(`Creating customer ${order.customer.first_name} ${order.customer.last_name} on Omie`)
 
@@ -48,24 +55,21 @@ const handle = async (req, res) => {
 
   console.log(`Cliente e ordem de pedido cadastrados com sucesso. :)`)
 
-  // order.line_items.map(async item => {
-  //   if (item.title === 'Reserva Vela 2') {
-  //     console.log(`Creating Shopify card for Vela 2 reservation.`)
-  //     const card = await createCard({
-  //       pipe: '1127491',
-  //       fields: {
-  //         nome: `${order.customer.first_name} ${order.customer.last_name}`,
-  //         reserva: item.title,
-  //         telefone: order.customer.default_address.phone,
-  //         email: order.customer.email
-  //       }
-  //     })
-  //     console.log('card:' + card)
-  //   }
-  // })
-
-  console.log('Returning 200 OK to Shopify')
-  res.send('OK')
+  order.line_items.map(async item => {
+    if (item.title === 'Reserva Vela 2') {
+      console.log(`Creating Shopify card for Vela 2 reservation.`)
+      const card = await createCard({
+        pipe: '1127491',
+        fields: {
+          nome: `${order.customer.first_name} ${order.customer.last_name}`,
+          reserva: item.title,
+          telefone: order.customer.default_address.phone,
+          email: order.customer.email
+        }
+      })
+      console.log('card:' + card)
+    }
+  })
 }
 
 export default handle

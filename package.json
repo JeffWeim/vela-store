@@ -34,6 +34,7 @@
     "apollo-link-prismic": "^1.0.2",
     "cep-promise": "^3.0.7",
     "dayjs": "^1.8.14",
+    "firebase-admin": "^8.8.0",
     "formik": "^1.5.1",
     "google-map-react": "^1.1.4",
     "graphql": "^14.2.1",
