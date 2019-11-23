@@ -60,10 +60,12 @@ const handle = async (req, res) => {
           email: order.customer.email
         }
       })
-      console.log(card)
+      console.log('card:' + card)
     }
   })
-  res.status(200).send('OK')
+  
+  console.log('Returning 200 OK to Shopify')
+  res.send('OK')
 }
 
 export default handle
