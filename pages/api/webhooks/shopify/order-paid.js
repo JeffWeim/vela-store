@@ -25,7 +25,7 @@ const handle = async (req, res) => {
 
   const order = await orders.add({
     ...orderData,
-    customerRef: await putCustomer(custonerData)
+    customerRef: await putCustomer(customerData)
   })
 
   console.log('Returning 200 OK to Shopify')
