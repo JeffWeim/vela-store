@@ -1,4 +1,4 @@
-import { putCustomer, createOrder } from 'lib/omie'
+//import { putCustomer, createOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
 import { firestore } from 'lib/firebase'
 import { normalizeOrder } from 'lib/shopify'
@@ -29,9 +29,10 @@ const handle = async (req, res) => {
   const orderData = await normalizeOrder(req.body)
   const { customer: customerData } = orderData
 
+  const customer = await putCustomer(customerData)
   const order = await putOrder({
     ...orderData,
-    customerRef: await putCustomer(customerData)
+    customerRef: customer
   })
 
   console.log('Returning 200 OK to Shopify')
@@ -39,20 +40,11 @@ const handle = async (req, res) => {
 
   //console.log(`Creating customer ${order.customer.first_name} ${order.customer.last_name} on Omie`)
 
-  // const omieCustomer = await putCustomer({
-  //   extId: order.customer.id.toString().substring(3, order.customer.id.length),
-  //   name: `${order.customer.first_name} ${order.customer.last_name}`,
-  //   email: order.customer.email,
-  //   doc: order.customer.default_address.company,
-  //   phone: order.customer.default_address.phone,
-  //   zip: cepLocation.cep,
-  //   state: cepLocation.state,
-  //   city: cepLocation.city + ' (' + cepLocation.state + ')',
-  //   address: addressArray.slice(0, -1).join(' '),
-  //   number: addressArray[addressArray.length - 1].substring(0, 10),
-  //   complement: order.customer.default_address.address2
-  // })
-  // console.log(omieCustomer)
+  const omieCustomer = await putCustomer({
+    customerData,
+    id: customer.id
+  })
+  console.log(omieCustomer)
 
   // console.log(`Creating Order on Omie`)
 
