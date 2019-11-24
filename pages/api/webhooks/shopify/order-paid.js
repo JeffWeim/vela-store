@@ -26,8 +26,8 @@ const putOrder = async orderData => {
 }
 
 const handle = async (req, res) => {
-  if (req.get('x-shopify-topic') !== 'orders/paid') return
-  
+  if (req.headers['x-shopify-topic'] !== 'orders/paid') return res.status(401).send('Unauthorized')
+
   const orderData = await normalizeOrder(req.body)
   const { customer: customerData } = orderData
 
