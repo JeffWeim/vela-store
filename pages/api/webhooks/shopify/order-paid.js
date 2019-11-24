@@ -49,21 +49,15 @@ const handle = async (req, res) => {
 
   // console.log(`Creating Order on Omie`)
 
-  // const omieOrder = await createOmieOrder({
-  //   ...orderData,
-  //   id: order.id,
-  //   customerId: customer.id
-  // })
+  const omieOrder = await createOmieOrder({
+    ...orderData,
+    id: order.id,
+    customerId: customer.id
+  })
 
   //   customerId: omieCustomer.id,
   //   orderId: order.id.toString().substring(3, order.id.length),
   //   forecast: '03/09/2019',
-  //   information: {
-  //     codigo_categoria: '1.01.03',
-  //     codigo_conta_corrente: 1359770974,
-  //     consumidor_final: 'S',
-  //     enviar_email: 'N'
-  //   },
   //   products: order.line_items.map(item => ({
   //     sku: item.sku,
   //     extId: item.id,
