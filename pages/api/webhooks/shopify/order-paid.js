@@ -6,6 +6,7 @@ import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const order = await normalizeOrder(req.body)
+  console.log(order)
   //const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
   //const addressArray = order.customer.default_address.address1.split(' ')
 
