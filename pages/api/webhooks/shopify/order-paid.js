@@ -6,7 +6,7 @@ import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const orderData = await normalizeOrder(req.body)
-  const { customer: customerData } = order
+  const { customer: customerData } = orderData
 
   const orders = firestore.collection('orders')
   const customers = firestore.collection('customers')
