@@ -39,7 +39,6 @@ const handle = async (req, res) => {
 
   console.log('Returning 200 OK to Shopify')
   res.send('OK')
-  console.log('really?')
   //console.log(`Creating customer ${order.customer.first_name} ${order.customer.last_name} on Omie`)
 
   const omieCustomer = await putOmieCustomer({
@@ -48,13 +47,13 @@ const handle = async (req, res) => {
   })
   console.log(omieCustomer)
 
-  console.log(`Creating Order on Omie`)
+  // console.log(`Creating Order on Omie`)
 
-  const omieOrder = await createOmieOrder({
-    ...orderData,
-    id: order.id,
-    customerId: customer.id
-  })
+  // const omieOrder = await createOmieOrder({
+  //   ...orderData,
+  //   id: order.id,
+  //   customerId: customer.id
+  // })
 
   //   customerId: omieCustomer.id,
   //   orderId: order.id.toString().substring(3, order.id.length),
