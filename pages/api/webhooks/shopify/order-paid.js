@@ -10,13 +10,22 @@ const handle = async (req, res) => {
 
   const orders = firestore.collection('orders')
   const customers = firestore.collection('customers')
-  const customerQuery = await customers.where('shopifyId', '==', customerData.shopifyId).limit(1).get()
   
+  const putCustomer = async customerData => {
+    const customerQuery = await customers.where('shopifyId', '==', customerData.shopifyId).limit(1).get()
+    if (customerQuery.empty) {
+      return await customers.add(customerData)
+    } else {
+      const update = await customerQuery.docs[0].ref.update(customerData)
+      console.log(update)
+      console.log(update.transformResults)
+      return customerQuery.docs[0].ref
+    }
+  }
+
   const order = await orders.add({
     ...orderData,
-    customerRef: customerQuery.empty
-      ? await customers.add(customerData)
-      : await customerQuery.docs[0].ref.update(customerData)
+    customerRef: await putCustomer(custonerData)
   })
 
   console.log('Returning 200 OK to Shopify')
