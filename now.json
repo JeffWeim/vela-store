@@ -35,11 +35,5 @@
       "status": 301,
       "headers": { "Location": "/rede/recarga" }
     }
-  ],
-	"functions": {
-		"api/**/*.js": {
-			"memory": 512,
-			"maxDuration": 15
-		}
-	}
+  ]
 }
