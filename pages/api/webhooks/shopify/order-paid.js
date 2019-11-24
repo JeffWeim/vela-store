@@ -6,12 +6,15 @@ import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const order = await normalizeOrder(req.body)
-  console.log(order)
-  //const cepLocation = await cep(order.customer.default_address.zip.length > 8 ? order.customer.default_address.zip : '09930270')
-  //const addressArray = order.customer.default_address.address1.split(' ')
+  const { customer } = order
 
   const ordersCollection = firestore.collection('orders')
-  const orderReference = await ordersCollection.add(order)
+  const customersCollection = firestore.collection('customers')
+  const customerRef = await customersCollection.add(customer)
+  const orderRef = await ordersCollection.add({
+    ...order,
+    customerRef
+  })
 
   console.log('Returning 200 OK to Shopify')
   res.send('OK')
