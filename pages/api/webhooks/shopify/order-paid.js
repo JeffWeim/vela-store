@@ -2,28 +2,34 @@ import { putCustomer, createOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
 import { firestore } from 'lib/firebase'
 import { normalizeOrder } from 'lib/shopify'
-import cep from 'cep-promise'
 
 const handle = async (req, res) => {
   const orderData = await normalizeOrder(req.body)
   const { customer: customerData } = orderData
 
-  const orders = firestore.collection('orders')
-  const customers = firestore.collection('customers')
-  
   const putCustomer = async customerData => {
+    const customers = firestore.collection('customers')
     const customerQuery = await customers.where('shopifyId', '==', customerData.shopifyId).limit(1).get()
     if (customerQuery.empty) {
       return await customers.add(customerData)
     } else {
       const update = await customerQuery.docs[0].ref.update(customerData)
-      console.log(update)
-      console.log(update.transformResults)
       return customerQuery.docs[0].ref
     }
   }
 
-  const order = await orders.add({
+  const putOrder = async orderData => {
+    const orders = firestore.collection('orders')
+    const orderQuery = await orders.where('shopifyId', '==', orderData.shopifyId).limit(1).get()
+    if (orderQuery.empty) {
+      return await orders.add(orderData)
+    } else {
+      const update = await orderQuery.docs[0].ref.update(orderData)
+      return orderQuery.docs[0].ref
+    }
+  }
+
+  const order = await putOrder({
     ...orderData,
     customerRef: await putCustomer(customerData)
   })
