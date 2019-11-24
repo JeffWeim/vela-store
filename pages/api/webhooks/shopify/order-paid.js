@@ -5,15 +5,18 @@ import { normalizeOrder } from 'lib/shopify'
 import cep from 'cep-promise'
 
 const handle = async (req, res) => {
-  const order = await normalizeOrder(req.body)
-  const { customer } = order
+  const orderData = await normalizeOrder(req.body)
+  const { customer: customerData } = order
 
-  const ordersCollection = firestore.collection('orders')
-  const customersCollection = firestore.collection('customers')
-  const customerRef = await customersCollection.add(customer)
-  const orderRef = await ordersCollection.add({
-    ...order,
-    customerRef
+  const orders = firestore.collection('orders')
+  const customers = firestore.collection('customers')
+  const customerQuery = await customers.where('shopifyId', '==', customer.shopifyId).limit(1).get()
+  
+  const order = await orders.add({
+    ...orderData,
+    customerRef: customerQuery.empty
+      ? await customers.add(customerData)
+      : await customerQuery.docs[0].ref.update(customerData)
   })
 
   console.log('Returning 200 OK to Shopify')
