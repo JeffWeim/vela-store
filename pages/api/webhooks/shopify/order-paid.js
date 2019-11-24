@@ -1,4 +1,4 @@
-import { putCustomer as putOmieCustomer } from 'lib/omie'
+import { putCustomer as putOmieCustomer, createOrder as createOmieOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
 import { firestore } from 'lib/firebase'
 import { normalizeOrder } from 'lib/shopify'
@@ -46,9 +46,14 @@ const handle = async (req, res) => {
   })
   console.log(omieCustomer)
 
-  // console.log(`Creating Order on Omie`)
+  console.log(`Creating Order on Omie`)
 
-  // const omieOrder = await createOrder({
+  const omieOrder = await createOmieOrder({
+    ...orderData,
+    id: order.id,
+    customerId: customer.id
+  })
+
   //   customerId: omieCustomer.id,
   //   orderId: order.id.toString().substring(3, order.id.length),
   //   forecast: '03/09/2019',
