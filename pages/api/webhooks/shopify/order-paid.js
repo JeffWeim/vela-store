@@ -10,7 +10,7 @@ const handle = async (req, res) => {
 
   const orders = firestore.collection('orders')
   const customers = firestore.collection('customers')
-  const customerQuery = await customers.where('shopifyId', '==', customer.shopifyId).limit(1).get()
+  const customerQuery = await customers.where('shopifyId', '==', customerData.shopifyId).limit(1).get()
   
   const order = await orders.add({
     ...orderData,
