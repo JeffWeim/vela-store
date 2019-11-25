@@ -21,14 +21,14 @@ const handle = async (req, res) => {
     ...customerData,
     id: customer.id
   })
-  customer.update({ omieId: omieCustomerData.omieId })
+  customer.update(omieCustomerData)
 
   const omieOrder = await createOmieOrder({
     ...orderData,
     id: order.id,
     customerId: customer.id
   })
-  order.update({ omieId: omieOrder.omieId })
+  order.update(omieOrder.omieId)
 
   // console.log(`Cliente e ordem de pedido cadastrados com sucesso. :)`)
 
