@@ -28,7 +28,7 @@ const handle = async (req, res) => {
     id: order.id,
     customerId: customer.id
   })
-  order.update(omieOrder.omieId)
+  order.update(omieOrder)
 
   // console.log(`Cliente e ordem de pedido cadastrados com sucesso. :)`)
 
