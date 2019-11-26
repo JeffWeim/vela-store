@@ -1,7 +1,33 @@
 import { putCustomer as putOmieCustomer, createOrder as createOmieOrder } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
-import { putCustomer, putOrder } from 'lib/firebase'
+import { firestore } from 'lib/firebase'
 import { normalizeOrder } from 'lib/shopify'
+
+export const putCustomer = async customerData => {
+  const customers = firestore.collection('customers')
+  const customerQuery = await customers.where('shopifyId', '==', customerData.shopifyId).limit(1).get()
+
+  if (customerQuery.empty) {
+    return customers.add(customerData)
+  } else {
+    await customerQuery.docs[0].ref.update(customerData)
+
+    return customerQuery.docs[0].ref
+  }
+}
+
+export const putOrder = async orderData => {
+  const orders = firestore.collection('orders')
+  const orderQuery = await orders.where('shopifyId', '==', orderData.shopifyId).limit(1).get()
+
+  if (orderQuery.empty) {
+    return orders.add(orderData)
+  } else {
+    await orderQuery.docs[0].ref.update(orderData)
+
+    return orderQuery.docs[0].ref
+  }
+}
 
 const handle = async (req, res) => {
   if (req.headers['x-shopify-topic'] !== 'orders/paid') return res.status(401).send('Unauthorized')
@@ -10,6 +36,7 @@ const handle = async (req, res) => {
   const { customer: customerData } = orderData
 
   const customer = await putCustomer(customerData)
+
   const order = await putOrder({
     ...orderData,
     customerRef: customer
