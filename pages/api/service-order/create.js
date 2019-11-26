@@ -1,4 +1,4 @@
-import { putCustomer, createServiceOrder, findCustomer } from 'lib/omie'
+import { putCustomer, createServiceOrder, getCustomer } from 'lib/omie'
 import { createCard } from 'lib/pipefy'
 
 const handle = async (req, res) => {
@@ -6,7 +6,7 @@ const handle = async (req, res) => {
 
   if (!name || !doc || !description) return res.end('Missing fields.')
 
-  const existingCustomer = await findCustomer({ doc })
+  const existingCustomer = await getCustomer({ doc })
 
   const customer = await putCustomer({
     ...existingCustomer && { id: existingCustomer.id },
