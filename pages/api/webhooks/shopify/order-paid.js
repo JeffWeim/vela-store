@@ -57,23 +57,21 @@ const handle = async (req, res) => {
   })
   order.update(omieOrder)
 
-  // console.log(`Cliente e ordem de pedido cadastrados com sucesso. :)`)
-
-  // order.line_items.map(async item => {
-  //   if (item.title === 'Reserva Vela 2') {
-  //     console.log(`Creating Shopify card for Vela 2 reservation.`)
-  //     const card = await createCard({
-  //       pipe: '1127491',
-  //       fields: {
-  //         nome: `${order.customer.first_name} ${order.customer.last_name}`,
-  //         reserva: item.title,
-  //         telefone: order.customer.default_address.phone,
-  //         email: order.customer.email
-  //       }
-  //     })
-  //     console.log('card:' + card)
-  //   }
-  // })
+  orderData.line_items.map(async item => {
+    if (item.title === 'Reserva Vela 2') {
+      console.log(`Creating pipefy card for Vela 2 reservation.`)
+      const card = await createCard({
+        pipe: '1127491',
+        fields: {
+          nome: `${order.customer.first_name} ${order.customer.last_name}`,
+          reserva: item.title,
+          telefone: order.customer.default_address.phone,
+          email: order.customer.email
+        }
+      })
+      console.log('card: ' + card)
+    }
+  })
 }
 
 export default handle
