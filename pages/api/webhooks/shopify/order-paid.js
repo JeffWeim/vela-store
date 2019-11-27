@@ -43,11 +43,12 @@ const handle = async (req, res) => {
   })
 
   res.send('OK')
-
+  console.log('posok')
   const omieCustomerData = await putOmieCustomer({
     ...customerData,
     id: customer.id
   })
+  console.log(omieCustomerData)
   customer.update(omieCustomerData)
 
   const omieOrder = await createOmieOrder({
