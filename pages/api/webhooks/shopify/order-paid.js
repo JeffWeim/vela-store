@@ -32,11 +32,11 @@ export const putOrder = async orderData => {
 const handle = async (req, res) => {
   if (req.headers['x-shopify-topic'] !== 'orders/paid') return res.status(401).send('Unauthorized')
 
+  console.log(`Processing shopify paid order #${req.body.order_number}.`)
+
   const orderData = await normalizeOrder(req.body)
   const { customer: customerData } = orderData
-
   const customer = await putCustomer(customerData)
-
   const order = await putOrder({
     ...orderData,
     customerRef: customer
