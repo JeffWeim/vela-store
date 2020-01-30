@@ -1,5 +1,38 @@
 const { json } = require('micro')
-const correios = require('node-correios')()
+const correios = require('node-correios')
+const request = require('request')
+const geolib = require('geolib')
+
+const autorizadas = [
+  {
+    latitude: '-30.029939997',
+    longitude: '-51.23'
+  },
+  {
+    latitude: '-23.2515399629',
+    longitude: '-46.3126098758'
+  },
+  {
+    latitude: '-23.9821374',
+    longitude: '-46.2999354'
+  },
+  {
+    latitude: '-20.281594',
+    longitude: '-40.2982874'
+  },
+  {
+    latitude: '-19.9294985',
+    longitude: '-43.9496391'
+  },
+  {
+    latitude: '-23.664',
+    longitude: '-46.5332834014'
+  },
+  {
+    latitude: '-8.0372467',
+    longitude: '-34.8909859'
+  }
+]
 
 const normalizeText = text => {
   const specialChars = 'àáäâãèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ'
@@ -16,6 +49,38 @@ module.exports = async (req, res) => {
   const { rate: { origin, destination, items } } = await json(req)
   const totalGrams = items.map(item => item.grams).reduce((b, a) => b + a, 0)
   const totalPrice = items.map(item => item.price).reduce((b, a) => b + a, 0)
+  const cepAvailable = destination.postal_code.replace('-', '')
+  var isCepAvailable = false
+
+  const options = {
+    url: `http://www.cepaberto.com/api/v3/cep?cep=${cepAvailable}`,
+    headers: {
+      'Authorization': `Token token=${process.env.CEP_ABERTO_TOKEN}`
+    }
+  }
+
+  const callback = (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      const info = JSON.parse(body)
+      autorizadas.map(auto => {
+        if (
+          geolib.isPointWithinRadius(
+            { latitude: info.latitude, longitude: info.longitude },
+            { latitude: auto.latitude, longitude: auto.longitude },
+            30000
+          )
+        ) {
+          isCepAvailable = true
+        }
+      })
+
+      return '200'
+    } else {
+      return 'error'
+    }
+  }
+
+  request(options, callback)
 
   if (totalPrice > 6500 && totalGrams < 300) {
     res.end(JSON.stringify({
@@ -50,7 +115,7 @@ module.exports = async (req, res) => {
         rates: mapCorreiosResultToRate(result)
       }))
     })
-  } else if (['SP', 'RJ', 'PR', 'SC', 'RS', 'ES', 'MG', 'DF', 'PB'].some(v => v === destination.province)) { // eslint-disable-line
+  } else if (isCepAvailable === true) { // eslint-disable-line
     return (
       res.end(JSON.stringify({
         rates: [{
