@@ -1,5 +1,5 @@
 const { json } = require('micro')
-const correios = require('node-correios')
+const correios = require('node-correios')()
 const request = require('request')
 const geolib = require('geolib')
 
@@ -55,7 +55,7 @@ module.exports = async (req, res) => {
   const options = {
     url: `http://www.cepaberto.com/api/v3/cep?cep=${cepAvailable}`,
     headers: {
-      'Authorization': `Token token=${process.env.CEP_ABERTO_TOKEN}`
+      'Authorization': `Token token=${process.env.CEP_ABERTO_TOKEN}` // Verificar este token
     }
   }
 
@@ -80,7 +80,7 @@ module.exports = async (req, res) => {
     }
   }
 
-  request(options, callback)
+  request(options, callback) // Esta função precisa ser sincrona
 
   if (totalPrice > 6500 && totalGrams < 300) {
     res.end(JSON.stringify({
@@ -115,7 +115,7 @@ module.exports = async (req, res) => {
         rates: mapCorreiosResultToRate(result)
       }))
     })
-  } else if (isCepAvailable === true) { // eslint-disable-line
+  } else if (isCepAvailable === true) {
     return (
       res.end(JSON.stringify({
         rates: [{
