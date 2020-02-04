@@ -1,6 +1,6 @@
 const { json } = require('micro')
 const correios = require('node-correios')()
-const request = require('request')
+const fetch = require('node-fetch')
 const geolib = require('geolib')
 
 const autorizadas = [
@@ -34,14 +34,14 @@ const autorizadas = [
   }
 ]
 
-const normalizeText = text => {
-  const specialChars = 'àáäâãèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ'
-  const normalChars = 'aaaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh'
-  const expression = new RegExp(specialChars.split('').join('|'), 'g')
+// const normalizeText = text => {
+//   const specialChars = 'àáäâãèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ'
+//   const normalChars = 'aaaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh'
+//   const expression = new RegExp(specialChars.split('').join('|'), 'g')
 
-  return text.toString().toLowerCase().trim()
-    .replace(expression, index => normalChars.charAt(specialChars.indexOf(index)))
-}
+//   return text.toString().toLowerCase().trim()
+//     .replace(expression, index => normalChars.charAt(specialChars.indexOf(index)))
+// }
 
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json')
@@ -50,37 +50,33 @@ module.exports = async (req, res) => {
   const totalGrams = items.map(item => item.grams).reduce((b, a) => b + a, 0)
   const totalPrice = items.map(item => item.price).reduce((b, a) => b + a, 0)
   const cepAvailable = destination.postal_code.replace('-', '')
-  var isCepAvailable = false
 
-  const options = {
-    url: `http://www.cepaberto.com/api/v3/cep?cep=${cepAvailable}`,
-    headers: {
-      'Authorization': `Token token=${process.env.CEP_ABERTO_TOKEN}` // Verificar este token
-    }
-  }
+  const getDataResult = async () => {
+    try {
+      const response = await fetch(`http://www.cepaberto.com/api/v3/cep?cep=${cepAvailable}`, {
+        headers: {
+          'Authorization': `Token token=${process.env.CEP_ABERTO_TOKEN}`
+        }
+      })
+      const info = await response.json()
 
-  const callback = (error, response, body) => {
-    if (!error && response.statusCode === 200) {
-      const info = JSON.parse(body)
-      autorizadas.map(auto => {
-        if (
+      const result = autorizadas.some(auto => {
+        return (
           geolib.isPointWithinRadius(
             { latitude: info.latitude, longitude: info.longitude },
             { latitude: auto.latitude, longitude: auto.longitude },
             30000
           )
-        ) {
-          isCepAvailable = true
-        }
+        )
       })
 
-      return '200'
-    } else {
-      return 'error'
+      return result
+    } catch (error) {
+      return error
     }
   }
 
-  request(options, callback) // Esta função precisa ser sincrona
+  const resultZip = await getDataResult()
 
   if (totalPrice > 6500 && totalGrams < 300) {
     res.end(JSON.stringify({
@@ -115,7 +111,7 @@ module.exports = async (req, res) => {
         rates: mapCorreiosResultToRate(result)
       }))
     })
-  } else if (isCepAvailable === true) {
+  } else if (resultZip) {
     return (
       res.end(JSON.stringify({
         rates: [{
@@ -134,7 +130,7 @@ module.exports = async (req, res) => {
   }
 }
 
-const mapCorreiosResultToRate = (result) => result.map(r => ({ // map here or map out?
+const mapCorreiosResultToRate = (result) => result.map(r => ({
   service_name: `Correios -${r.Codigo}`,
   service_code: r.Codigo,
   total_price: parseFloat(r.Valor.split(',').join('.')) * 100,
